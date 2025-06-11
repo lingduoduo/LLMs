@@ -22,3 +22,40 @@ with redis_client.pipeline(transaction=False) as pipe:
         pipe.execute()
 
 print(f"Inserted/updated {total:,} keywords into 'top_action_keywords'")
+
+
+from typing import List, Tuple
+from redis.commands.search.suggestion import Suggestion
+
+def get_suggestions(redis_client, prefix: str, max_results: int = 10, fuzzy: bool = True) -> List[Tuple[str, float]]:
+    """
+    Get autocomplete suggestions from RediSearch for given prefix.
+
+    Parameters
+    ----------
+    redis_client : Redis
+        Connected redis-py client.
+    prefix : str
+        The prefix string to autocomplete on.
+    max_results : int
+        Max number of suggestions to return.
+    fuzzy : bool
+        Whether to allow fuzzy matching (typos).
+
+    Returns
+    -------
+    List[Tuple[str, float]]
+        List of (keyword, score) suggestions.
+    """
+    suggestions = redis_client.ft().sugget(
+        'top_action_keywords',
+        prefix,
+        max=max_results,
+        fuzzy=fuzzy,
+        with_scores=True
+    )
+    
+    if not suggestions:
+        return []
+
+    return [(s.string, s.score) for s in suggestions]
