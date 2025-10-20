@@ -41,7 +41,24 @@ def extract_terms_with_ruler(text, glossary):
     return candidates
 
 
-# --- example ---
+# --- Model example ---
+# https://modelscope.cn/models/iic/nlp_raner_named-entity-recognition_english-large-ai/summary
+
 text = "CNN is a type of neural network. The CPU cost per unit is high."
 candidates = extract_terms_with_ruler(text, GLOSSARY)
 print("Extracted Candidates:", candidates)
+
+
+# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+from transformers import AutoTokenizer, AutoModelForTokenClassification
+from transformers import pipeline
+
+tokenizer = AutoTokenizer.from_pretrained("dslim/bert-base-NER")
+model = AutoModelForTokenClassification.from_pretrained("dslim/bert-base-NER")
+
+nlp = pipeline("ner", model=model, tokenizer=tokenizer)
+example = "CNN is a type of neural network. The CPU cost per unit is high."
+
+ner_results = nlp(example)
+print(ner_results[0]['word'])
