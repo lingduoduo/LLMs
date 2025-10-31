@@ -34,11 +34,18 @@ embeddings = OpenAIEmbeddings()
 vectorstore = FAISS.from_documents(docs, embeddings)
 
 # 4. Initialize an LLM-based retriever
-llm = ChatOpenAI(temperature=0)
+# llm = ChatOpenAI(temperature=0)  # Original (using OpenAI)
+
+# Replace the LLM with an open-source one
+llm = HuggingFacePipeline.from_model_id(
+    model_id="Qwen/Qwen1.5-0.5B-Chat",
+    task="text-generation"
+)
 retriever_from_llm = MultiQueryRetriever.from_llm(
     retriever=vectorstore.as_retriever(),
     llm=llm
 )
+
 
 # 5. Perform a query
 query = "What is CNN?"
@@ -65,4 +72,69 @@ print("\n--- Retrieved document contents ---")
 for doc in retrieved_docs:
     print(doc.page_content)
 
+# HyDE
+# Alternative Example (Using Open-Source Models)
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.llms import HuggingFacePipeline
+from langchain_core.retrievers.bm25 import BM25Retriever
 
+doc_text = """
+Part 1: About CNN
+Convolutional Neural Networks (CNNs) are a type of deep learning model particularly effective in the field of image recognition.
+They automatically extract hierarchical features from image data, and their ability to recognize local features makes them highly efficient.
+
+Part 2: About Transformers
+Unlike CNNs, Transformer models were initially used for natural language processing (NLP) tasks,
+but their structure has also been successfully applied to computer vision, such as Vision Transformer (ViT).
+
+Part 3: About Large Language Models
+Large Language Models (LLMs) are at the forefront of AI research, based on the Transformer architecture.
+They are capable of generating human-like text through large-scale data training and are driving the rapid progress of generative AI.
+"""
+
+# Save the document to a text file
+with open("hybrid_search_doc.txt", "w", encoding="utf-8") as f:
+    f.write(doc_text)
+
+# 2. Load and split the document
+loader = TextLoader("hybrid_search_doc.txt", encoding="utf-8")
+documents = loader.load()
+
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=120, chunk_overlap=20)
+docs = text_splitter.split_documents(documents)
+
+print(f"✅ The document has been split into {len(docs)} chunks.")
+
+
+# 3. Create a vector database
+# embeddings = OpenAIEmbeddings()  # Original (using OpenAI)
+# Replace the embedding model with an open-source one
+embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-small-en")  # English version
+vectorstore = FAISS.from_documents(docs, embeddings)
+faiss_retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+
+bm25_retriever = BM25Retriever.from_documents(docs)
+bm25_retriever.k = 3
+print("✅ BM25 retriever initialized with k=3.")
+
+
+retriver_list = [bm25_retriever, faiss_retriever]
+merged_retriever = MultiRetriever(retrievers=retriver_list)
+print("✅ Merged retriever created from BM25 and FAISS retrievers.")
+
+query = "Explain CNN in detail."
+
+bm25_results = bm25_retriever.get_relevant_documents(query)
+print("\n--- BM25 Retriever Results ---")
+for doc in bm25_results:
+    print(doc.page_content[:50])
+
+faiss_results = faiss_retriever.get_relevant_documents(query)
+print("\n--- FAISS Retriever Results ---")
+for doc in faiss_results:
+    print(doc.page_content[:50])
+
+retrieved_docs = merged_retriever.get_relevant_documents(query)
+print(f"\nUser query: {query}")
+for doc in retrieved_docs:
+    print(doc.page_content[:50])
