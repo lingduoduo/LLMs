@@ -139,3 +139,18 @@ A technical term database forms the core infrastructure of a terminology consist
 5. **Versioning and update mechanisms** – Establish change logs, review cycles, and rollback strategies to ensure accuracy and adaptability.  
 
 ---
+
+## **4. Augmenatation Techniques**
+
+The core goal is to further optimize both the **breadth and precision** of retrieval results based on the initial recall stage.
+ The preprocessing stage resolves the issue of term *standardization*, while this stage focuses on **how to leverage these standardized terms to achieve maximum effectiveness in actual retrieval**.
+
+| Technique                                             | Description                                                  | Contribution to Term Consistency                             |
+| ----------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| **Query Expansion & Rewriting (MultiQueryRetriever)** | Uses an LLM to generate multiple semantically equivalent query variations and merges their retrieval results. | Automatically covers synonyms or related expressions that users did not mention, greatly improving recognition and recall of diverse terminology. |
+| **HyDE (Hypothetical Document Embedding)**            | Uses an LLM to generate a hypothetical “ideal answer” document for the query, then performs embedding-based retrieval with that document. | By generating a context-rich “ideal answer,” it mitigates issues where the original query lacks sufficient terminology or information, improving retrieval relevance. |
+| **Hybrid Retrieval (BM25 + FAISS)**                   | Combines the strengths of keyword-based retrieval (e.g., BM25) and vector-based retrieval (e.g., FAISS). | Integrates literal exact matching with semantic similarity matching, ensuring core terms aren’t lost while also discovering semantically related content. |
+| **Cross-Encoder Reranking (BGE-reranker)**            | Uses more complex cross-encoder models (e.g., BGE-reranker) to refine the ranking of retrieved results. | Enhances the ranking precision by analyzing fine-grained interactions between the query and the document, improving semantic matching accuracy. |
+
+---
+

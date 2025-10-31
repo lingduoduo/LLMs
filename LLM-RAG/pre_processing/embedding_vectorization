@@ -109,3 +109,42 @@ faiss_index, indexed_term_list = build_term_vector_index(term_mapping_example, m
 print("\n--- FAISS index successfully built ---")
 print(f"Number of vectors in FAISS index: {faiss_index.ntotal}")
 print(f"List of indexed terms: {indexed_term_list}")
+
+def search_similar_terms(query_text: str, model: SentenceTransformer, index: faiss.IndexFlatL2, term_list: list,  top_k: int = 5) -> list:
+    """
+    Search for terms similar to the query using the FAISS index.
+
+    Args:
+        query (str): The input query term.
+        index (faiss.IndexFlatL2): The FAISS index containing term vectors.
+        term_list (list): List of terms corresponding to the FAISS index.
+        model (SentenceTransformer): Pre-loaded sentence transformer model.
+        top_k (int): Number of top similar terms to retrieve.
+
+    Returns:
+        list: List of top_k similar terms.
+    """
+    print("\n--- Searching for similar terms ---")
+    print(f"Query: {query_text}")
+
+    # 1. Encode the query text
+    query_vector = model.encode([query_text])
+    query_vector = query_vector.astype("float32")
+
+    # 2. Perform search in FAISS
+    distances, indices = index.search(query_vector, k=3)
+
+    # 3. Display results
+    print("Search results:")
+    results = []
+    for i in range(top_k):
+        idx = indices[0][i]
+        dist = distances[0][i]
+        term = term_list[idx]
+        print(f"{i+1}. {term} (distance: {dist:.4f})")
+        results.append((term, dist))
+
+    return results
+
+
+search_similar_terms(query_text="CNN", model=model, index=faiss_index, term_list=indexed_term_list, top_k=3)
