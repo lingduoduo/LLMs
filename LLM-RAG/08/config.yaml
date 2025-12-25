@@ -1,0 +1,33 @@
+ocr:
+  # 移除API相关配置，添加PaddleOCR参数
+  use_doc_orientation_classify: false
+  use_doc_unwarping: false
+  use_textline_orientation: false
+  language: "ch"
+  high_precision: true
+  # 添加模型路径配置（可选）
+  det_model_dir: "./inference/det"
+  rec_model_dir: "./inference/rec"
+
+dify:
+  api_key: "dataset-EEea1eaLRrC57oan3JgKOYzN"
+  dataset_id: "0a1b4060-6336-4328-b121-4f95db4b7d22"  # 你的数据集ID
+  indexing_technique: "high_quality"
+  process_rules:
+    pre_processing:
+      - id: "remove_extra_spaces"
+        enabled: true
+      - id: "remove_urls_emails"
+        enabled: true
+    segmentation:
+      separator: "###"
+      max_tokens: 500
+
+meta:
+  fields:
+    - name: "author"
+      value: "default_author"
+      id: "c68b5bb0-7f28-4d22-ba86-e5bbb247ddee"  # 添加创建成功的ID
+    - name: "doc_source"
+      value_from: "filename"
+      id: "80434248-71b3-4519-8899-b08b22a387af"  # 添加创建成功的ID

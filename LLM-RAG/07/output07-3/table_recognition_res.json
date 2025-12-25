@@ -1,0 +1,16 @@
+{
+    "input_path": "./pics/table_recognition.png",
+    "page_index": null,
+    "class_ids": [
+        0,
+        1
+    ],
+    "scores": [
+        0.8442100286483765,
+        0.15579000115394592
+    ],
+    "label_names": [
+        "wired_table",
+        "wireless_table"
+    ]
+}

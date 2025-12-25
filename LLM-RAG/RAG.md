@@ -1,6 +1,6 @@
 # RAG
 
-## File Extraction
+## Section 1 - File Extraction
 
 ### Dify RAG Extractor
 
@@ -57,7 +57,7 @@ mineru -p demo/pdfs/data.pdf -o demo/pdfs/ --source huggingface
 ```
 
 
-## **Glossary Management**
+## **Section 3 - Glossary Management**
 
 ### ** 1. Building and Maintaining a Technical Term Database**
 
@@ -71,19 +71,19 @@ mineru -p demo/pdfs/data.pdf -o demo/pdfs/ --source huggingface
 A technical term database forms the core infrastructure of a terminology consistency and optimization system. It provides a single source of truth for standardized terms, preventing ambiguity and miscommunication.
 
 #### **1.3 Construction Process**
-1. **Collect terminology sources**  
+-  **Collect terminology sources**  
    Gather terms from documentation, codebases, design specs, academic publications, FAQs, etc.
 
-2. **Standardize terms**  
+-  **Standardize terms**  
    Normalize capitalization, formatting, spelling, and abbreviations.
 
-3. **Establish mapping relationships**  
+-  **Establish mapping relationships**  
    Define relationships between standard terms, aliases, abbreviations, deprecated names, and cross-lingual equivalents.
 
-4. **Add contextual information**  
+-  **Add contextual information**  
    Include definitions, usage examples, domain tags, and common misuses.
 
-5. **Build terminology index**  
+- **Build terminology index**  
    Organize and index terms for efficient querying and system integration.
 
 **Key components of the database:**
