@@ -1,5 +1,5 @@
 """
-Memory Transformer 模型模块
+Memory Transformer
 """
 from .memory_transformer import MemoryTransformer
 
