@@ -1,0 +1,11 @@
+{
+  "din_sql": {
+    "cache_enabled": true,
+    "max_cache_size": 100
+  },
+  "dail_sql": {
+    "learning_enabled": true,
+    "similarity_threshold": 0.3,
+    "max_history_size": 1000
+  }
+}
